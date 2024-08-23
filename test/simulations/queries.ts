@@ -60,6 +60,7 @@ export const simulateQueries = () => {
           operation: "thoughts",
           fields: ["id", "name", "thought"]
         },
+        null,
         DefaultAppSyncQueryAdapter
       );
 
@@ -78,6 +79,7 @@ export const simulateQueries = () => {
           },
           fields: ["id", "name", "thought"]
         },
+        null,
         DefaultAppSyncQueryAdapter
       );
 
@@ -586,7 +588,6 @@ export const simulateQueries = () => {
             fields: ["name", "publishedAt"]
           }
         ],
-        null,
         {
           operationName: "operation"
         }
@@ -666,7 +667,8 @@ export const simulateQueries = () => {
             namedFragment: true
           }
         ]
-      }, null, {
+      },
+      {
         fragment: [{
           name: "NamedFragment",
           on: "User",

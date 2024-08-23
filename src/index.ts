@@ -8,8 +8,8 @@ import type { IMutationAdapter, IQueryAdapter, ISubscriptionAdapter } from "./ty
 export const { DefaultAppSyncQueryAdapter, DefaultAppSyncMutationAdapter } = adapters;
 export const gqlQuery = (
   options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  adapter?: any,
-  config?: Config
+  config?: Config | null,
+  adapter?: any
 ) => {
   let defaultAdapter: IQueryAdapter;
   if (Array.isArray(options)) {
@@ -30,8 +30,8 @@ export const gqlQuery = (
 
 export const gqlMutation = (
   options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  adapter?: IMutationAdapter,
-  config?: Config
+  config?: Config | null,
+  adapter?: IMutationAdapter
 ) => {
   let customAdapter: IMutationAdapter;
   let defaultAdapter: IMutationAdapter;

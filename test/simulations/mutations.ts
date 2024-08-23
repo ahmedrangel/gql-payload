@@ -292,21 +292,19 @@ export const simulateMutations = () => {
     });
 
     it("generates mutation with operation name", () => {
-      const query = gqlMutation(
-        [
-          {
-            operation: "thoughtCreate",
-            variables: {
-              name: "Tyrion Lannister",
-              thought: "I drink and I know things."
-            },
-            fields: ["id"]
-          }
-        ],
-        undefined,
+      const query = gqlMutation([
         {
-          operationName: "operation"
+          operation: "thoughtCreate",
+          variables: {
+            name: "Tyrion Lannister",
+            thought: "I drink and I know things."
+          },
+          fields: ["id"]
         }
+      ],
+      {
+        operationName: "operation"
+      }
       );
 
       expect(query).toStrictEqual({
@@ -329,7 +327,8 @@ export const simulateMutations = () => {
           operation: "NamedFragment",
           namedFragment: true
         }]
-      }, null, {
+      },
+      {
         fragment: [{
           name: "NamedFragment",
           on: "Create",

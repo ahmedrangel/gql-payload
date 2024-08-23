@@ -71,7 +71,7 @@ const getInfo = (options) => {
   const queryTopRated = multiQuery({ alias: "top", ...options, sort: Sort.SCORE_DESC });
   const queryTrending = multiQuery({ alias: "trending", ...options, sort: [Sort.TRENDING_DESC, Sort.POPULARITY_DESC] });
 
-  const query = gqlQuery([queryNew, queryTopRated, queryTrending], null, {
+  const query = gqlQuery([queryNew, queryTopRated, queryTrending], {
     fragment: [{
       name: "details",
       on: "Media",
