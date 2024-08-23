@@ -20,8 +20,8 @@ export default class DefaultQueryAdapter implements IQueryAdapter {
   ) {
     // Default configs
     this.config = {
-      operationName: null,
-      fragment: null
+      operationName: "",
+      fragment: []
     };
     if (configuration) {
       for (const [key, value] of Object.entries(configuration)) {
@@ -83,7 +83,7 @@ export default class DefaultQueryAdapter implements IQueryAdapter {
       query = query.replace("query", `query ${this.config.operationName}`);
     }
 
-    if (this.config.fragment && Array.isArray(this.config.fragment)) {
+    if (this.config.fragment.length && Array.isArray(this.config.fragment)) {
       const fragmentsArray = [];
       for (const fragment of this.config.fragment) {
         fragmentsArray.push(`fragment ${fragment.name} on ${fragment.on} { ${queryFieldsMap(fragment.fields)} }`);
