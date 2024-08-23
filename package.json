@@ -1,6 +1,6 @@
 {
   "name": "gql-payload",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "GraphQL Payload Builder",
   "type": "module",
   "repository": {
