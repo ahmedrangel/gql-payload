@@ -34,7 +34,7 @@ export type FragmentFields = Array<string | { [key: string]: FragmentFields }>;
 
 export interface Config {
   operationName?: string;
-  fragment?: {
+  fragments?: {
     name: string;
     on: string;
     fields: FragmentFields;

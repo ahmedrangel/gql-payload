@@ -669,7 +669,7 @@ export const simulateQueries = () => {
         ]
       },
       {
-        fragment: [{
+        fragments: [{
           name: "NamedFragment",
           on: "User",
           fields: ["id", "name", "thought", "grade", { type: ["a", "b"] }]

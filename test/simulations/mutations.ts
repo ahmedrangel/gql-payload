@@ -329,7 +329,7 @@ export const simulateMutations = () => {
         }]
       },
       {
-        fragment: [{
+        fragments: [{
           name: "NamedFragment",
           on: "Create",
           fields: ["id"]
