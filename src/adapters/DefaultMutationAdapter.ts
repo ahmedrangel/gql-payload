@@ -9,14 +9,14 @@ import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
 export default class DefaultMutationAdapter implements IMutationAdapter {
-  private variables: any | undefined;
-  private fields: Fields | undefined;
+  private variables: any;
+  private fields: Fields;
   private operation!: string | IOperation;
-  private config: Config | undefined;
+  private config: Config;
 
   constructor (
     options: IQueryBuilderOptions | IQueryBuilderOptions[],
-    configuration?: Config | undefined
+    configuration?: Config
   ) {
     if (Array.isArray(options)) {
       this.variables = resolveVariables(options);

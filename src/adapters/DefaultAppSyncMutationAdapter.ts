@@ -9,8 +9,8 @@ import { resolveVariables, queryDataType, queryVariablesMap } from "../utils/hel
 import { IMutationAdapter } from "../types/adapters";
 
 export default class DefaultAppSyncMutationAdapter implements IMutationAdapter {
-  private variables: any | undefined;
-  private fields: Fields | undefined;
+  private variables: any;
+  private fields: Fields;
   private operation!: string | IOperation;
 
   constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {

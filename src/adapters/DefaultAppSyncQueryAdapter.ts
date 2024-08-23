@@ -9,8 +9,8 @@ import { OperationType } from "../enums";
 import { resolveVariables, queryVariablesMap, queryFieldsMap } from "../utils/helpers";
 
 export default class DefaultAppSyncQueryAdapter implements IQueryAdapter {
-  private variables!: any | undefined;
-  private fields: Fields | undefined;
+  private variables!: any;
+  private fields: Fields;
   private operation!: string | IOperation;
 
   constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {

@@ -9,14 +9,14 @@ import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
 export default class DefaultQueryAdapter implements IQueryAdapter {
-  private variables!: any | undefined;
-  private fields: Fields | undefined;
+  private variables!: any;
+  private fields: Fields;
   private operation!: string | IOperation;
-  private config: Config | undefined;
+  private config: Config;
 
   constructor (
     options: IQueryBuilderOptions | IQueryBuilderOptions[],
-    configuration?: { [key: string]: any }
+    configuration?: Config
   ) {
     // Default configs
     this.config = {

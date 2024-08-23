@@ -10,8 +10,8 @@ import { queryDataType, queryVariablesMap, resolveVariables } from "../utils/hel
 
 export default class DefaultSubscriptionAdapter
 implements ISubscriptionAdapter {
-  private variables: any | undefined;
-  private fields: Fields | undefined;
+  private variables: any;
+  private fields: Fields;
   private operation!: string | IOperation;
 
   constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {
