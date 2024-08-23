@@ -13,7 +13,7 @@ export interface IOperation {
   alias: string;
 }
 
-export interface Fields extends Array<string | object | NestedField> {}
+export interface Fields extends Array<string | object | NestedOptions> {}
 
 export interface IQueryBuilderOptions {
   operation: string | IOperation /* Operation name */;
@@ -22,7 +22,7 @@ export interface IQueryBuilderOptions {
   /* VariableOptions Interface or regular single key object */
 }
 
-export interface NestedField {
+export interface NestedOptions {
   operation: string;
   variables: IQueryBuilderOptions[];
   fields: Fields;
@@ -30,35 +30,13 @@ export interface NestedField {
   namedFragment?: boolean | null;
 }
 
-export interface IMutationAdapter {
-  mutationBuilder: () => { variables: any, query: string };
-  mutationsBuilder: (options: IQueryBuilderOptions[]) => {
-    variables: any;
-    query: string;
-  };
-}
-
-export interface IQueryAdapter {
-  queryBuilder: () => { variables: any, query: string };
-  queriesBuilder: (options: IQueryBuilderOptions[]) => {
-    variables: any;
-    query: string;
-  };
-}
-
-export interface ISubscriptionAdapter {
-  subscriptionBuilder: () => { variables: any, query: string };
-  subscriptionsBuilder: (options: IQueryBuilderOptions[]) => {
-    variables: any;
-    query: string;
-  };
-}
+export type FragmentFields = Array<string | { [key: string]: FragmentFields }>;
 
 export interface Config {
   operationName?: string;
   fragment?: {
     name: string;
     on: string;
-    fields: any[];
+    fields: FragmentFields;
   }[];
 }

@@ -1,11 +1,11 @@
-import type { Fields, IQueryBuilderOptions, NestedField, VariableOptions } from "../types";
+import type { Fields, IQueryBuilderOptions, NestedOptions, VariableOptions } from "../types";
 
 /*
 Defines an array of strings or objects to define query fields
 @example ['id', 'name']
 @example [{id: 1, name: 'Chuck'}]
  */
-export const isNestedField = (object: any): object is NestedField => {
+export const isNestedField = (object: any): object is NestedOptions => {
   if (typeof object !== "object") return false;
 
   const generalCondition = object.operation && object.variables && object.fields;
@@ -99,7 +99,7 @@ export const queryFieldsMap = (fields?: Fields): string => {
   }).join(" ") : "";
 };
 
-export const queryNestedFieldMap = (field: NestedField) => {
+export const queryNestedFieldMap = (field: NestedOptions) => {
   return `${getFragment(field) + operationOrInlineFragment(field)} ${
     isInlineFragment(field) || field.namedFragment ? "": queryDataNameAndArgumentMap(field.variables)
   } ${Array.isArray(field.fields) && field.fields.length > 0? "{ " + queryFieldsMap(field.fields) + " }": ""}`;
@@ -111,19 +111,19 @@ export const operationOrAlias = (
   return typeof operation === "string"? operation: `${operation.alias}: ${operation.name}`;
 };
 
-export const isInlineFragment = (field: NestedField): boolean => {
+export const isInlineFragment = (field: NestedOptions): boolean => {
   return field?.inlineFragment === true || false;
 };
 
-export const isNamedFragment = (field: NestedField): boolean => {
+export const isNamedFragment = (field: NestedOptions): boolean => {
   return field?.namedFragment === true || false;
 };
 
-export const operationOrInlineFragment = (field: NestedField): string => {
+export const operationOrInlineFragment = (field: NestedOptions): string => {
   return isInlineFragment(field)? field.operation: operationOrAlias(field.operation);
 };
 
-export const getFragment = (field: NestedField): string => {
+export const getFragment = (field: NestedOptions): string => {
   return isInlineFragment(field) ? "... on " : isNamedFragment(field) ? "..." : "";
 };
 

@@ -3,7 +3,8 @@
 @desc A basic implementation to use
 @desc modify the output of the query template by passing a second argument to query(options, AdapterClass)
  */
-import type { VariableOptions, IQueryBuilderOptions, IOperation, Fields, IQueryAdapter, Config } from "../types";
+import type { VariableOptions, IQueryBuilderOptions, IOperation, Fields, Config } from "../types";
+import { IQueryAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 

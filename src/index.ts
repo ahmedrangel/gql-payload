@@ -2,7 +2,8 @@ import adapters from "./adapters";
 import DefaultMutationAdapter from "./adapters/DefaultMutationAdapter";
 import DefaultQueryAdapter from "./adapters/DefaultQueryAdapter";
 import DefaultSubscriptionAdapter from "./adapters/DefaultSubscriptionAdapter";
-import type { Config, IMutationAdapter, IQueryAdapter, IQueryBuilderOptions, ISubscriptionAdapter } from "./types";
+import type { Config, IQueryBuilderOptions } from "./types";
+import type { IMutationAdapter, IQueryAdapter, ISubscriptionAdapter } from "./types/adapters";
 
 export const { DefaultAppSyncQueryAdapter, DefaultAppSyncMutationAdapter } = adapters;
 export const gqlQuery = (
@@ -29,8 +30,8 @@ export const gqlQuery = (
 
 export const gqlMutation = (
   options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  adapter?: IMutationAdapter | null,
-  config?: any
+  adapter?: IMutationAdapter,
+  config?: Config
 ) => {
   let customAdapter: IMutationAdapter;
   let defaultAdapter: IMutationAdapter;
@@ -54,7 +55,7 @@ export const gqlMutation = (
 
 export const gqlSubscription = (
   options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  adapter?: ISubscriptionAdapter | null
+  adapter?: ISubscriptionAdapter
 ) => {
   let customAdapter: ISubscriptionAdapter;
   let defaultAdapter: ISubscriptionAdapter;

@@ -3,7 +3,8 @@
 @desc A basic implementation to use
 @desc modify the output of the subscription template by passing a second argument to subscription(options, AdapterClass)
  */
-import type { IQueryBuilderOptions, IOperation, Fields, ISubscriptionAdapter } from "../types";
+import type { IQueryBuilderOptions, IOperation, Fields } from "../types";
+import type { ISubscriptionAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { queryDataType, queryVariablesMap, resolveVariables } from "../utils/helpers";
 

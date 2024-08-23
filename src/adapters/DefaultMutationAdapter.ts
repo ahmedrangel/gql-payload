@@ -3,7 +3,8 @@
 @desc A basic implementation to use
 @desc modify the output of the mutation template by passing a second argument to mutation(options, AdapterClass)
  */
-import type { IQueryBuilderOptions, IOperation, Fields, IMutationAdapter, Config } from "../types";
+import type { IQueryBuilderOptions, IOperation, Fields, Config } from "../types";
+import { IMutationAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
@@ -15,7 +16,7 @@ export default class DefaultMutationAdapter implements IMutationAdapter {
 
   constructor (
     options: IQueryBuilderOptions | IQueryBuilderOptions[],
-    configuration?: { [key: string]: unknown }
+    configuration?: Config | undefined
   ) {
     if (Array.isArray(options)) {
       this.variables = resolveVariables(options);
