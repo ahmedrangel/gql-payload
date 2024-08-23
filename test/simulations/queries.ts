@@ -670,12 +670,12 @@ export const simulateQueries = () => {
         fragment: [{
           name: "NamedFragment",
           on: "User",
-          fields: ["id", "name", "thought", "grade"]
+          fields: ["id", "name", "thought", "grade", { type: ["a", "b"] }]
         }]
       });
 
       expect(query).toStrictEqual({
-        query: "query { thought { ...NamedFragment } } fragment NamedFragment on User { id name thought grade }",
+        query: "query { thought { ...NamedFragment } } fragment NamedFragment on User { id name thought grade type { a b } }",
         variables: {}
       });
     });
