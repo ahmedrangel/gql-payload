@@ -1,93 +1,103 @@
-/*
-@class DefaultMutationAdapter
-@desc A basic implementation to use
-@desc modify the output of the subscription template by passing a second argument to subscription(options, AdapterClass)
- */
-import type { IQueryBuilderOptions, IOperation, Fields } from "../types";
-import type { ISubscriptionAdapter } from "../types/adapters";
+import type { IQueryBuilderOptions, IOperation, Fields, Config, VariableOptions } from "../types";
+import { ISubscriptionAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
-import { queryDataType, queryVariablesMap, resolveVariables } from "../utils/helpers";
+import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
-export default class DefaultSubscriptionAdapter
-implements ISubscriptionAdapter {
+export default class DefaultSubscriptionAdapter implements ISubscriptionAdapter {
   private variables: any;
   private fields: Fields;
   private operation!: string | IOperation;
+  private config: Config;
 
-  constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {
+  constructor (
+    options: IQueryBuilderOptions | IQueryBuilderOptions[],
+    configuration?: Config
+  ) {
+    // Default configs
+    this.config = {
+      operationName: "",
+      fragments: []
+    };
+    if (configuration) {
+      for (const [key, value] of Object.entries(configuration)) {
+        this.config[key] = value;
+      }
+    }
+
     if (Array.isArray(options)) {
       this.variables = resolveVariables(options);
     }
     else {
       this.variables = options.variables;
-      this.fields = options.fields;
+      this.fields = options.fields || [];
       this.operation = options.operation;
     }
   }
 
   public subscriptionBuilder () {
-    return this.operationWrapperTemplate(
-      this.variables,
-      this.operationTemplate(this.operation)
-    );
+    return this.operationWrapperTemplate(this.operationTemplate(this.variables));
   }
 
   public subscriptionsBuilder (subscriptions: IQueryBuilderOptions[]) {
-    const content = subscriptions.map((opts) => {
-      this.operation = opts.operation;
-      this.variables = opts.variables;
-      this.fields = opts.fields;
-      return this.operationTemplate(opts.operation);
-    });
-    return this.operationWrapperTemplate(
-      resolveVariables(subscriptions),
-      content.join("\n  ")
-    );
-  }
-  // Convert object to name and argument map. eg: (id: $id)
-  private queryDataNameAndArgumentMap () {
-    return this.variables && Object.keys(this.variables).length? `(${Object.keys(this.variables).reduce(
-      (dataString, key, i) =>
-        `${dataString}${i !== 0 ? ", " : ""}${key}: $${key}`,
-      ""
-    )})`: "";
+    const content = () => {
+      const tmpl: string[] = [];
+      for (const subscription of subscriptions) {
+        if (subscription) {
+          this.operation = subscription.operation;
+          this.fields = subscription.fields;
+          tmpl.push(this.operationTemplate(subscription.variables));
+        }
+      }
+      return tmpl.join(" ");
+    };
+    return this.operationWrapperTemplate(content());
   }
 
-  private queryDataArgumentAndTypeMap (variables: any): string {
-    return Object.keys(variables).length? `(${Object.keys(variables).reduce(
+  private queryDataArgumentAndTypeMap (): string {
+    let variablesUsed: { [key: string]: unknown } = this.variables;
+
+    if (this.fields && typeof this.fields === "object") {
+      variablesUsed = {
+        ...getNestedVariables(this.fields),
+        ...variablesUsed
+      };
+    }
+    return variablesUsed && Object.keys(variablesUsed).length > 0? `(${Object.keys(variablesUsed).reduce(
       (dataString, key, i) =>
-        `${dataString}${i !== 0 ? ", " : ""}$${key}: ${queryDataType(
-          variables[key]
+        `${dataString}${i !== 0 ? ", " : ""}$${key}: ${queryDataType(variablesUsed[key]
         )}`,
       ""
     )})`: "";
   }
 
   // start of subscription building
-  private operationWrapperTemplate (variables: any, content: string) {
+  private operationWrapperTemplate (content: string) {
+    let query = `${OperationType.Subscription} ${this.queryDataArgumentAndTypeMap()} { ${content} }`;
+
+    if (this.config.operationName) {
+      query = query.replace("subscription", `subscription ${this.config.operationName}`);
+    }
+
+    if (this.config.fragments.length && Array.isArray(this.config.fragments)) {
+      const fragmentsArray = [];
+      for (const fragment of this.config.fragments) {
+        fragmentsArray.push(`fragment ${fragment.name} on ${fragment.on} { ${queryFieldsMap(fragment.fields)} }`);
+      }
+      query = `${query} ${fragmentsArray.join(" ")}`;
+    }
+
     return {
-      query: `${OperationType.Subscription} ${this.queryDataArgumentAndTypeMap(variables)} { ${content} }`.replace(/\n+/g, "").replace(/ +/g, " "),
-      variables: queryVariablesMap(variables)
+      query: query.replace(/\n+/g, "").replace(/ +/g, " "),
+      variables: queryVariablesMap(this.variables, this.fields)
     };
   }
 
-  private operationTemplate (operation: string | IOperation) {
-    const operationName =
+  private operationTemplate (variables: VariableOptions | undefined) {
+    const operation =
       typeof this.operation === "string"? this.operation: `${this.operation.alias}: ${this.operation.name}`;
 
-    return `${operationName} ${this.queryDataNameAndArgumentMap()} {
-    ${this.queryFieldsMap(this.fields)}
-  }`;
-  }
-
-  // Fields selection map. eg: { id, name }
-  private queryFieldsMap (fields?: Fields): string {
-    return fields? fields
-      .map((field) =>
-        typeof field === "object"? `${Object.keys(field)[0]} { ${this.queryFieldsMap(
-          Object.values(field)[0]
-        )} }`: `${field}`
-      )
-      .join(", "): "";
+    return `${operation} ${variables ? queryDataNameAndArgumentMap(variables) : ""} ${
+      this.fields && this.fields.length > 0 ? `{ ${queryFieldsMap(this.fields)} }`: ""
+    }`;
   }
 }

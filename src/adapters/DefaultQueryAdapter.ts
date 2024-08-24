@@ -1,15 +1,10 @@
-/*
-@class DefaultQueryAdapter
-@desc A basic implementation to use
-@desc modify the output of the query template by passing a second argument to query(options, AdapterClass)
- */
-import type { VariableOptions, IQueryBuilderOptions, IOperation, Fields, Config } from "../types";
+import type { IQueryBuilderOptions, IOperation, Fields, Config, VariableOptions } from "../types";
 import { IQueryAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
 export default class DefaultQueryAdapter implements IQueryAdapter {
-  private variables!: any;
+  private variables: any;
   private fields: Fields;
   private operation!: string | IOperation;
   private config: Config;
@@ -96,6 +91,7 @@ export default class DefaultQueryAdapter implements IQueryAdapter {
       variables: queryVariablesMap(this.variables, this.fields)
     };
   }
+
   // query
   private operationTemplate (variables: VariableOptions | undefined) {
     const operation =

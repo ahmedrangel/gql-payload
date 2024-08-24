@@ -1,9 +1,4 @@
-/*
-@class DefaultMutationAdapter
-@desc A basic implementation to use
-@desc modify the output of the mutation template by passing a second argument to mutation(options, AdapterClass)
- */
-import type { IQueryBuilderOptions, IOperation, Fields, Config } from "../types";
+import type { IQueryBuilderOptions, IOperation, Fields, Config, VariableOptions } from "../types";
 import { IMutationAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
@@ -18,15 +13,6 @@ export default class DefaultMutationAdapter implements IMutationAdapter {
     options: IQueryBuilderOptions | IQueryBuilderOptions[],
     configuration?: Config
   ) {
-    if (Array.isArray(options)) {
-      this.variables = resolveVariables(options);
-    }
-    else {
-      this.variables = options.variables;
-      this.fields = options.fields;
-      this.operation = options.operation;
-    }
-
     // Default configs
     this.config = {
       operationName: "",
@@ -37,23 +23,39 @@ export default class DefaultMutationAdapter implements IMutationAdapter {
         this.config[key] = value;
       }
     }
+
+    if (Array.isArray(options)) {
+      this.variables = resolveVariables(options);
+    }
+    else {
+      this.variables = options.variables;
+      this.fields = options.fields || [];
+      this.operation = options.operation;
+    }
   }
 
   public mutationBuilder () {
-    return this.operationWrapperTemplate(this.variables, this.operationTemplate(this.operation));
+    return this.operationWrapperTemplate(this.operationTemplate(this.variables));
   }
 
   public mutationsBuilder (mutations: IQueryBuilderOptions[]) {
-    const content = mutations.map((opts) => {
-      this.operation = opts.operation;
-      this.variables = opts.variables;
-      this.fields = opts.fields;
-      return this.operationTemplate(opts.operation);
-    });
-    return this.operationWrapperTemplate(resolveVariables(mutations), content.join("\n  "));
+    const content = () => {
+      const tmpl: string[] = [];
+      for (const mutation of mutations) {
+        if (mutation) {
+          this.operation = mutation.operation;
+          this.fields = mutation.fields;
+          tmpl.push(this.operationTemplate(mutation.variables));
+        }
+      }
+      return tmpl.join(" ");
+    };
+    return this.operationWrapperTemplate(content());
   }
 
-  private queryDataArgumentAndTypeMap (variablesUsed: any): string {
+  private queryDataArgumentAndTypeMap (): string {
+    let variablesUsed: { [key: string]: unknown } = this.variables;
+
     if (this.fields && typeof this.fields === "object") {
       variablesUsed = {
         ...getNestedVariables(this.fields),
@@ -62,16 +64,15 @@ export default class DefaultMutationAdapter implements IMutationAdapter {
     }
     return variablesUsed && Object.keys(variablesUsed).length > 0? `(${Object.keys(variablesUsed).reduce(
       (dataString, key, i) =>
-        `${dataString}${i !== 0 ? ", " : ""}$${key}: ${queryDataType(
-          variablesUsed[key]
+        `${dataString}${i !== 0 ? ", " : ""}$${key}: ${queryDataType(variablesUsed[key]
         )}`,
       ""
     )})`: "";
   }
 
   // start of mutation building
-  private operationWrapperTemplate (variables: any, content: string) {
-    let query = `${OperationType.Mutation} ${this.queryDataArgumentAndTypeMap(variables)} { ${content} }`;
+  private operationWrapperTemplate (content: string) {
+    let query = `${OperationType.Mutation} ${this.queryDataArgumentAndTypeMap()} { ${content} }`;
 
     if (this.config.operationName) {
       query = query.replace("mutation", `mutation ${this.config.operationName}`);
@@ -87,15 +88,15 @@ export default class DefaultMutationAdapter implements IMutationAdapter {
 
     return {
       query: query.replace(/\n+/g, "").replace(/ +/g, " "),
-      variables: queryVariablesMap(variables, this.fields)
+      variables: queryVariablesMap(this.variables, this.fields)
     };
   }
 
-  private operationTemplate (operation: string | IOperation) {
-    const operationName =
-      typeof operation === "string"? operation: `${operation.alias}: ${operation.name}`;
+  private operationTemplate (variables: VariableOptions | undefined) {
+    const operation =
+      typeof this.operation === "string"? this.operation: `${this.operation.alias}: ${this.operation.name}`;
 
-    return `${operationName} ${queryDataNameAndArgumentMap(this.variables)} ${
+    return `${operation} ${variables ? queryDataNameAndArgumentMap(variables) : ""} ${
       this.fields && this.fields.length > 0 ? `{ ${queryFieldsMap(this.fields)} }`: ""
     }`;
   }
