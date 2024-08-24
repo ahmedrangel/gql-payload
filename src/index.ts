@@ -11,6 +11,7 @@ export const gqlQuery = (
   config?: Config | null,
   adapter?: any
 ) => {
+  let customAdapter: IQueryAdapter;
   let defaultAdapter: IQueryAdapter;
   if (Array.isArray(options)) {
     if (adapter) {
@@ -55,6 +56,7 @@ export const gqlMutation = (
 
 export const gqlSubscription = (
   options: IQueryBuilderOptions | IQueryBuilderOptions[],
+  config?: Config | null,
   adapter?: ISubscriptionAdapter
 ) => {
   let customAdapter: ISubscriptionAdapter;
@@ -62,17 +64,17 @@ export const gqlSubscription = (
   if (Array.isArray(options)) {
     if (adapter) {
       // @ts-ignore
-      customAdapter = new adapter(options);
+      customAdapter = new adapter(options, config);
       return customAdapter.subscriptionsBuilder(options);
     }
-    defaultAdapter = new DefaultSubscriptionAdapter(options);
+    defaultAdapter = new DefaultSubscriptionAdapter(options, config);
     return defaultAdapter.subscriptionsBuilder(options);
   }
   if (adapter) {
     // @ts-ignore
-    customAdapter = new adapter(options);
+    customAdapter = new adapter(options, config);
     return customAdapter.subscriptionBuilder();
   }
-  defaultAdapter = new DefaultSubscriptionAdapter(options);
+  defaultAdapter = new DefaultSubscriptionAdapter(options, config);
   return defaultAdapter.subscriptionBuilder();
 };
