@@ -109,5 +109,99 @@ export const simulateSubscriptions = () => {
         }
       });
     });
+
+    it("generates subscription with object variables nested in fields", () => {
+      const query = gqlSubscription([
+        {
+          operation: "onPublication",
+          variables: { id: { type: "ID", value: 12 } },
+          fields: [
+            {
+              operation: "publication",
+              variables: {
+                input: {
+                  value: { type: "news", tz: "EST" },
+                  type: "FilterInput"
+                }
+              },
+              fields: ["name", "publishedAt"]
+            }
+          ]
+        }
+      ]);
+
+      expect(query).toStrictEqual({
+        query: "subscription ($input: FilterInput, $id: ID) { onPublication (id: $id) { publication (input: $input) { name publishedAt } } }",
+        variables: {
+          id: 12,
+          input: { type: "news", tz: "EST" }
+        }
+      });
+    });
+
+    it("generates multiple nested subscription operations with variables", () => {
+      const query = gqlSubscription([
+        {
+          operation: "namespaceField",
+          fields: [
+            {
+              operation: "subscriptionA",
+              variables: {
+                nameA: { value: "A" }
+              },
+              fields: ["id"]
+            }
+          ]
+        },
+        {
+          operation: "namespaceField",
+          fields: [
+            {
+              operation: "subscriptionB",
+              variables: {
+                nameB: { value: "B" }
+              },
+              fields: ["id"]
+            }
+          ]
+        }
+      ]);
+
+      expect(query).toStrictEqual({
+        query: "subscription ($nameB: String, $nameA: String) { namespaceField { subscriptionA (nameA: $nameA) { id } } namespaceField { subscriptionB (nameB: $nameB) { id } } }",
+        variables: { nameA: "A", nameB: "B" }
+      });
+    });
+
+    it("generates subscriptions with object variables for multiple subscriptions with nested variables", () => {
+      const query = gqlSubscription([
+        {
+          operation: "onPublication",
+          variables: { id: { type: "ID", value: 12 } },
+          fields: [
+            "publishedAt",
+            {
+              operation: "publicationOrg",
+              variables: { location: "mars" },
+              fields: ["name"]
+            }
+          ]
+        },
+        {
+          operation: "onFollow",
+          variables: { name: { value: "johndoe" } },
+          fields: ["full_name"]
+        }
+      ]);
+
+      expect(query).toStrictEqual({
+        query: "subscription ($id: ID, $location: String, $name: String) { onPublication (id: $id) { publishedAt publicationOrg (location: $location) { name } } onFollow (name: $name) { full_name } }",
+        variables: {
+          id: 12,
+          location: "mars",
+          name: "johndoe"
+        }
+      });
+    });
   });
 };
