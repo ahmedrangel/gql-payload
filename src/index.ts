@@ -15,14 +15,14 @@ export const gqlQuery = (
   let defaultAdapter: IQueryAdapter;
   if (Array.isArray(options)) {
     if (adapter) {
-      const customAdapter: IQueryAdapter = new adapter(options, config);
+      customAdapter = new adapter(options, config);
       return customAdapter.queriesBuilder(options);
     }
     defaultAdapter = new DefaultQueryAdapter(options, config);
     return defaultAdapter.queriesBuilder(options);
   }
   if (adapter) {
-    const customAdapter: IQueryAdapter = new adapter(options, config);
+    customAdapter = new adapter(options, config);
     return customAdapter.queryBuilder();
   }
   defaultAdapter = new DefaultQueryAdapter(options, config);
