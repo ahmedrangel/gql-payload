@@ -1,6 +1,8 @@
 # GraphQL Payload Builder
 This is an optimized fork of [gql-query-builder](https://github.com/atulmy/gql-query-builder) with extra features for generating GraphQL payloads using plain JavaScript Objects (JSON).
 
+[![npm](https://img.shields.io/npm/v/gql-payload.svg)](https://www.npmjs.com/package/gql-payload)
+
 ## Install
 
 `npm install gql-payload --save` or `yarn add gql-payload`
