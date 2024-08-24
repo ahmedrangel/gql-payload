@@ -74,7 +74,7 @@ const subscription = gqlSubscription(options: object)
 
 ### Adapter
 
-An optional second argument `adapter` is a typescript/javascript class that implements `IQueryAdapter`, `IMutationAdapter` or `ISubscriptionAdapter`.
+An optional third argument `adapter` is a typescript/javascript class that implements `IQueryAdapter`, `IMutationAdapter` or `ISubscriptionAdapter`.
 
 If adapter is undefined then `src/adapters/DefaultQueryAdapter` or `src/adapters/DefaultMutationAdapter` is used.
 
@@ -320,7 +320,7 @@ import { gqlQuery } from "gql-payload";
 const query = gqlQuery({
   operation: "userLogin",
   fields: ["userId", "token"]
-}, null, {
+}, {
   operationName: "someoperation"
 });
 
@@ -448,8 +448,8 @@ const query = gqlQuery({
       namedFragment: true
     }
   ]
-}, null, {
-  fragment: [
+}, {
+  fragments: [
     {
       name: "FragmentName",
       on: "FragmentType",
@@ -484,7 +484,7 @@ import MyQueryAdapter from "where/adapters/live/MyQueryAdapter";
 const query = gqlQuery({
   operation: "thoughts",
   fields: ["id", "name", "thought"]
-}, MyQueryAdapter);
+}, null, MyQueryAdapter);
 
 console.log(query);
 ```
@@ -605,7 +605,7 @@ import MyMutationAdapter from "where/adapters/live/MyMutationAdapter";
 const mutation = gqlMutation({
   operation: "thoughts",
   fields: ["id", "name", "thought"]
-}, MyMutationAdapter);
+}, null, MyMutationAdapter);
 
 console.log(mutation);
 ```
@@ -631,7 +631,7 @@ import { gqlMutation } from "gql-payload";
 const mutation = gqlMutation({
   operation: "thoughts",
   fields: ["id", "name", "thought"]
-}, undefined, {
+}, {
   operationName: "someoperation"
 });
 
@@ -690,7 +690,7 @@ import MySubscriptionAdapter from "where/adapters/live/MySubscriptionAdapter";
 const subscription = gqlSubscription({
   operation: "thoughts",
   fields: ["id", "name", "thought"]
-}, MySubscriptionAdapter);
+}, null, MySubscriptionAdapter);
 
 console.log(subscription);
 ```
