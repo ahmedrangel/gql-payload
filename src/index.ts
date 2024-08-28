@@ -2,13 +2,14 @@ import adapters from "./adapters";
 import DefaultMutationAdapter from "./adapters/DefaultMutationAdapter";
 import DefaultQueryAdapter from "./adapters/DefaultQueryAdapter";
 import DefaultSubscriptionAdapter from "./adapters/DefaultSubscriptionAdapter";
-import type { Config, IQueryBuilderOptions } from "./types";
+import type { GqlPayloadConfig, GqlPayloadOptions } from "./types";
 import type { IMutationAdapter, IQueryAdapter, ISubscriptionAdapter } from "./types/adapters";
 
+export type * from "./types";
 export const { DefaultAppSyncQueryAdapter, DefaultAppSyncMutationAdapter } = adapters;
 export const gqlQuery = (
-  options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  config?: Config | null,
+  options: GqlPayloadOptions | GqlPayloadOptions[],
+  config?: GqlPayloadConfig | null,
   adapter?: any
 ) => {
   let customAdapter: IQueryAdapter;
@@ -30,8 +31,8 @@ export const gqlQuery = (
 };
 
 export const gqlMutation = (
-  options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  config?: Config | null,
+  options: GqlPayloadOptions | GqlPayloadOptions[],
+  config?: GqlPayloadConfig | null,
   adapter?: IMutationAdapter
 ) => {
   let customAdapter: IMutationAdapter;
@@ -55,8 +56,8 @@ export const gqlMutation = (
 };
 
 export const gqlSubscription = (
-  options: IQueryBuilderOptions | IQueryBuilderOptions[],
-  config?: Config | null,
+  options: GqlPayloadOptions | GqlPayloadOptions[],
+  config?: GqlPayloadConfig | null,
   adapter?: ISubscriptionAdapter
 ) => {
   let customAdapter: ISubscriptionAdapter;

@@ -1,17 +1,17 @@
-import type { IQueryBuilderOptions, IOperation, Fields, Config, VariableOptions } from "../types";
+import type { GqlPayloadOptions, OperationOption, FieldsOption, GqlPayloadConfig, VariablesOption } from "../types";
 import { ISubscriptionAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
 export default class DefaultSubscriptionAdapter implements ISubscriptionAdapter {
   private variables: any;
-  private fields: Fields;
-  private operation!: string | IOperation;
-  private config: Config;
+  private fields: FieldsOption;
+  private operation!: string | OperationOption;
+  private config: GqlPayloadConfig;
 
   constructor (
-    options: IQueryBuilderOptions | IQueryBuilderOptions[],
-    configuration?: Config
+    options: GqlPayloadOptions | GqlPayloadOptions[],
+    configuration?: GqlPayloadConfig
   ) {
     // Default configs
     this.config = {
@@ -38,7 +38,7 @@ export default class DefaultSubscriptionAdapter implements ISubscriptionAdapter 
     return this.operationWrapperTemplate(this.operationTemplate(this.variables));
   }
 
-  public subscriptionsBuilder (subscriptions: IQueryBuilderOptions[]) {
+  public subscriptionsBuilder (subscriptions: GqlPayloadOptions[]) {
     const content = () => {
       const tmpl: string[] = [];
       for (const subscription of subscriptions) {
@@ -92,7 +92,7 @@ export default class DefaultSubscriptionAdapter implements ISubscriptionAdapter 
     };
   }
 
-  private operationTemplate (variables: VariableOptions | undefined) {
+  private operationTemplate (variables: VariablesOption | undefined) {
     const operation =
       typeof this.operation === "string"? this.operation: `${this.operation.alias}: ${this.operation.name}`;
 

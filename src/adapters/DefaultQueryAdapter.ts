@@ -1,17 +1,17 @@
-import type { IQueryBuilderOptions, IOperation, Fields, Config, VariableOptions } from "../types";
+import type { GqlPayloadOptions, OperationOption, FieldsOption, GqlPayloadConfig, VariablesOption } from "../types";
 import { IQueryAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { getNestedVariables, queryDataNameAndArgumentMap, queryDataType, queryFieldsMap, queryVariablesMap, resolveVariables } from "../utils/helpers";
 
 export default class DefaultQueryAdapter implements IQueryAdapter {
   private variables: any;
-  private fields: Fields;
-  private operation!: string | IOperation;
-  private config: Config;
+  private fields: FieldsOption;
+  private operation!: string | OperationOption;
+  private config: GqlPayloadConfig;
 
   constructor (
-    options: IQueryBuilderOptions | IQueryBuilderOptions[],
-    configuration?: Config
+    options: GqlPayloadOptions | GqlPayloadOptions[],
+    configuration?: GqlPayloadConfig
   ) {
     // Default configs
     this.config = {
@@ -38,7 +38,7 @@ export default class DefaultQueryAdapter implements IQueryAdapter {
     return this.operationWrapperTemplate(this.operationTemplate(this.variables));
   }
   // if we have an array of options, call this
-  public queriesBuilder (queries: IQueryBuilderOptions[]) {
+  public queriesBuilder (queries: GqlPayloadOptions[]) {
     const content = () => {
       const tmpl: string[] = [];
       for (const query of queries) {
@@ -93,7 +93,7 @@ export default class DefaultQueryAdapter implements IQueryAdapter {
   }
 
   // query
-  private operationTemplate (variables: VariableOptions | undefined) {
+  private operationTemplate (variables: VariablesOption | undefined) {
     const operation =
       typeof this.operation === "string"? this.operation: `${this.operation.alias}: ${this.operation.name}`;
 

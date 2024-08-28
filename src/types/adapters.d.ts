@@ -1,8 +1,8 @@
-import { IQueryBuilderOptions } from "./";
+import { GqlPayloadOptions } from "./";
 
 export interface IMutationAdapter {
   mutationBuilder: () => { variables: any, query: string };
-  mutationsBuilder: (options: IQueryBuilderOptions[]) => {
+  mutationsBuilder: (options: GqlPayloadOptions[]) => {
     variables: any;
     query: string;
   };
@@ -10,7 +10,7 @@ export interface IMutationAdapter {
 
 export interface IQueryAdapter {
   queryBuilder: () => { variables: any, query: string };
-  queriesBuilder: (options: IQueryBuilderOptions[]) => {
+  queriesBuilder: (options: GqlPayloadOptions[]) => {
     variables: any;
     query: string;
   };
@@ -18,7 +18,7 @@ export interface IQueryAdapter {
 
 export interface ISubscriptionAdapter {
   subscriptionBuilder: () => { variables: any, query: string };
-  subscriptionsBuilder: (options: IQueryBuilderOptions[]) => {
+  subscriptionsBuilder: (options: GqlPayloadOptions[]) => {
     variables: any;
     query: string;
   };

@@ -3,17 +3,17 @@
 @desc A basic implementation to use with AWS AppSync
 @desc modify the output of the mutation template by passing a second argument to mutation(options, AdapterClass)
  */
-import type { IQueryBuilderOptions, IOperation, Fields } from "../types";
+import type { GqlPayloadOptions, OperationOption, FieldsOption } from "../types";
 import { OperationType } from "../enums";
 import { resolveVariables, queryDataType, queryVariablesMap } from "../utils/helpers";
 import { IMutationAdapter } from "../types/adapters";
 
 export default class DefaultAppSyncMutationAdapter implements IMutationAdapter {
   private variables: any;
-  private fields: Fields;
-  private operation!: string | IOperation;
+  private fields: FieldsOption;
+  private operation!: string | OperationOption;
 
-  constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {
+  constructor (options: GqlPayloadOptions | GqlPayloadOptions[]) {
     if (Array.isArray(options)) {
       this.variables = resolveVariables(options);
     }
@@ -31,7 +31,7 @@ export default class DefaultAppSyncMutationAdapter implements IMutationAdapter {
     );
   }
 
-  public mutationsBuilder (mutations: IQueryBuilderOptions[]) {
+  public mutationsBuilder (mutations: GqlPayloadOptions[]) {
     const content = mutations.map((opts) => {
       this.operation = opts.operation;
       this.variables = opts.variables;
@@ -70,7 +70,7 @@ export default class DefaultAppSyncMutationAdapter implements IMutationAdapter {
     };
   }
 
-  private operationTemplate (operation: string | IOperation): string {
+  private operationTemplate (operation: string | OperationOption): string {
     const operationName =
       typeof operation === "string"? operation: `${operation.alias}: ${operation.name}`;
 
@@ -80,7 +80,7 @@ export default class DefaultAppSyncMutationAdapter implements IMutationAdapter {
   }
 
   // Fields selection map. eg: { id, name }
-  private queryFieldsMap (fields?: Fields): string {
+  private queryFieldsMap (fields?: FieldsOption): string {
     return Array.isArray(fields)? fields
       .map((field) =>
         typeof field === "object"? `${Object.keys(field)[0]} { ${this.queryFieldsMap(

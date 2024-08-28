@@ -1,4 +1,4 @@
-export interface Variables {
+export interface VariablesProps {
   type?: string;
   name?: string;
   value: any;
@@ -6,37 +6,39 @@ export interface Variables {
   required?: boolean;
 }
 
-export type VariableOptions = Variables | { [k: string]: any };
+export type VariablesOption = { [k: string]: VariablesProps } | { [k: string]: any };
 
-export interface IOperation {
+export interface OperationOption {
   name: string;
   alias: string;
 }
 
-export interface Fields extends Array<string | object | NestedOptions> {}
+export interface FieldsOption extends Array<string | object | NestedOptions> {}
 
-export interface IQueryBuilderOptions {
-  operation: string | IOperation /* Operation name */;
-  fields?: Fields /* Selection of fields to be returned by the operation */;
-  variables?: VariableOptions;
-  /* VariableOptions Interface or regular single key object */
+export interface GqlPayloadOptions {
+  operation: string | OperationOption /* Operation name */;
+  fields?: FieldsOption /* Selection of fields to be returned by the operation */;
+  variables?: VariablesOption;
+  /* VariablesOption Interface or regular single key object */
 }
 
 export interface NestedOptions {
   operation: string;
-  variables: IQueryBuilderOptions[];
-  fields: Fields;
+  variables: VariablesOption;
+  fields: FieldsOption;
   inlineFragment?: boolean | null;
   namedFragment?: boolean | null;
 }
 
-export type FragmentFields = Array<string | { [key: string]: FragmentFields }>;
+export type FragmentFields = string | { [key: string]: string[] };
 
-export interface Config {
+export interface FragmentsConfig {
+  name: string;
+  on: string;
+  fields: FragmentFields[];
+}
+
+export interface GqlPayloadConfig {
   operationName?: string;
-  fragments?: {
-    name: string;
-    on: string;
-    fields: FragmentFields;
-  }[];
+  fragments?: FragmentsConfig[];
 }

@@ -1,4 +1,4 @@
-import type { Fields, IQueryBuilderOptions, NestedOptions, VariableOptions } from "../types";
+import type { FieldsOption, GqlPayloadOptions, NestedOptions, VariablesOption } from "../types";
 
 /*
 Defines an array of strings or objects to define query fields
@@ -24,7 +24,7 @@ export const isNestedField = (object: any): object is NestedOptions => {
 };
 
 
-export const resolveVariables = (operations: IQueryBuilderOptions[]): any => {
+export const resolveVariables = (operations: GqlPayloadOptions[]): any => {
   let ret: any = {};
 
   for (const { variables, fields } of operations) {
@@ -37,9 +37,9 @@ export const resolveVariables = (operations: IQueryBuilderOptions[]): any => {
   return ret;
 };
 
-export const getNestedVariables = (fields: Fields) => {
+export const getNestedVariables = (fields: FieldsOption) => {
   let variables = {};
-  const getDeepestVariables = (innerFields: Fields) => {
+  const getDeepestVariables = (innerFields: FieldsOption) => {
     if (Array.isArray(innerFields)) {
       for (const field of innerFields) {
         if (isNestedField(field)) {
@@ -65,7 +65,7 @@ export const getNestedVariables = (fields: Fields) => {
 };
 
 // Convert object to name and argument map. eg: (id: $id)
-export const queryDataNameAndArgumentMap = (variables: VariableOptions) => {
+export const queryDataNameAndArgumentMap = (variables: VariablesOption) => {
   return variables && Object.keys(variables).length? `(${Object.entries(variables).reduce((dataString, [key, value], i) => {
     return `${dataString}${i !== 0 ? ", " : ""}${
       value && value.name ? value.name : key
@@ -73,14 +73,14 @@ export const queryDataNameAndArgumentMap = (variables: VariableOptions) => {
   }, "")})`: "";
 };
 
-export const queryFieldsMap = (fields?: Fields): string => {
+export const queryFieldsMap = (fields?: FieldsOption): string => {
   return fields ? fields.map((field) => {
     if (isNestedField(field)) {
       return queryNestedFieldMap(field);
     }
     else if (typeof field === "object") {
       let result = "";
-      const entries = Object.entries<Fields>(field as Record<string, Fields>);
+      const entries = Object.entries<FieldsOption>(field as Record<string, FieldsOption>);
       for (let i = 0; i < entries.length; i++) {
         const [key, values] = entries[i];
         result += Array.isArray(values) ? `${key} ${
@@ -106,7 +106,7 @@ export const queryNestedFieldMap = (field: NestedOptions) => {
 };
 
 export const operationOrAlias = (
-  operation: IQueryBuilderOptions["operation"]
+  operation: GqlPayloadOptions["operation"]
 ): string => {
   return typeof operation === "string"? operation: `${operation.alias}: ${operation.name}`;
 };
@@ -128,7 +128,7 @@ export const getFragment = (field: NestedOptions): string => {
 };
 
 // Variables map. eg: { "id": 1, "name": "Jon Doe" }
-export const queryVariablesMap = (variables: any, fields?: Fields) => {
+export const queryVariablesMap = (variables: any, fields?: FieldsOption) => {
   const variablesMapped: { [key: string]: unknown } = {};
   const update = (vars: any) => {
     if (vars) {

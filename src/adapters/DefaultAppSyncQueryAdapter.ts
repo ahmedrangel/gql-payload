@@ -3,17 +3,17 @@
 @desc A basic implementation to use with AWS AppSync
 @desc modify the output of the query template by passing a second argument to query(options, DefaultAppSyncQueryAdapter)
  */
-import type { IQueryBuilderOptions, IOperation, Fields } from "../types";
+import type { GqlPayloadOptions, OperationOption, FieldsOption } from "../types";
 import type { IQueryAdapter } from "../types/adapters";
 import { OperationType } from "../enums";
 import { resolveVariables, queryVariablesMap, queryFieldsMap } from "../utils/helpers";
 
 export default class DefaultAppSyncQueryAdapter implements IQueryAdapter {
   private variables!: any;
-  private fields: Fields;
-  private operation!: string | IOperation;
+  private fields: FieldsOption;
+  private operation!: string | OperationOption;
 
-  constructor (options: IQueryBuilderOptions | IQueryBuilderOptions[]) {
+  constructor (options: GqlPayloadOptions | GqlPayloadOptions[]) {
     if (Array.isArray(options)) {
       this.variables = resolveVariables(options);
     }
@@ -28,7 +28,7 @@ export default class DefaultAppSyncQueryAdapter implements IQueryAdapter {
     return this.operationWrapperTemplate(this.operationTemplate());
   }
   // if we have an array of options, call this
-  public queriesBuilder (queries: IQueryBuilderOptions[]) {
+  public queriesBuilder (queries: GqlPayloadOptions[]) {
     const content = () => {
       const tmpl: string[] = [];
       for (const query of queries) {
