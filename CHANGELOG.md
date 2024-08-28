@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v2.1.0
+
+[compare changes](https://github.com/ahmedrangel/gql-payload/compare/v2.0.0...v2.1.0)
+
+### 🚀 Enhancements
+
+- Improve and export types ([9fc24e4](https://github.com/ahmedrangel/gql-payload/commit/9fc24e4))
+- **playground:** Add ts playground and separate enums ([bb734b1](https://github.com/ahmedrangel/gql-payload/commit/bb734b1))
+
+### 🏡 Chore
+
+- Update deps ([50bd2d6](https://github.com/ahmedrangel/gql-payload/commit/50bd2d6))
+
+### ❤️ Contributors
+
+- Ahmed Rangel ([@ahmedrangel](http://github.com/ahmedrangel))
+
 ## v2.0.0
 
 [compare changes](https://github.com/ahmedrangel/gql-payload/compare/v1.0.1...v2.0.0)
