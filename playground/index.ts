@@ -1,8 +1,8 @@
-import { gqlQuery } from "gql-payload";
-import { API, Status, Sort, Licensor, Format } from "./enums/index.js";
+import { gqlQuery, type GqlPayloadOptions } from "gql-payload";
+import { API, Status, Sort, Licensor, Format } from "./enums";
 
 // Anilist API Reference https://anilist.github.io/ApiV2-GraphQL-Docs/
-const multiQuery = (options) => {
+const multiQuery = (options: Record<string, any>): GqlPayloadOptions => {
   return {
     operation: `${options.alias}: Page`,
     variables: {
@@ -29,7 +29,7 @@ const multiQuery = (options) => {
   };
 };
 
-const getInfo = (options) => {
+const getInfo = (options: Record<string, any>) => {
   const queryNew = multiQuery({ alias: "new", ...options, sort: Sort.START_DATE_DESC, status_in: [Status.AIRING, Status.FINISHED] });
   const queryTopRated = multiQuery({ alias: "top", ...options, sort: Sort.SCORE_DESC });
   const queryTrending = multiQuery({ alias: "trending", ...options, sort: [Sort.TRENDING_DESC, Sort.POPULARITY_DESC] });

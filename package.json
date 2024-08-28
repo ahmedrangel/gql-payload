@@ -13,10 +13,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "shx rm -rf ./dist/* && tsup src/index.ts --format esm --dts --config tsconfig.json",
+    "build": "shx rm -rf ./dist/* && tsup-node src/index.ts --format esm --dts --config tsconfig.json",
     "lint": "eslint --config .config/eslint.mjs",
     "test": "jest --config",
     "playground": "node playground/index.js",
+    "playground:ts": "tsx playground/index.ts",
     "release": "changelogen --release"
   },
   "keywords": [
@@ -49,6 +50,7 @@
     "shx": "^0.3.4",
     "ts-jest": "^29.2.4",
     "tsup": "^8.2.4",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   },
   "jest": {
